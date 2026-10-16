@@ -30,4 +30,23 @@ describe('CrListComponent', () => {
 		expect(fixture.nativeElement.querySelector('.cr-list__empty')).not.toBeNull();
 		expect(fixture.nativeElement.querySelector('.cr-list__table')).toBeNull();
 	});
+
+it('filterd rows by selected status', async () => {
+		const fixture = await render(users.approver);
+
+		expect(fixture.nativeElement.querySelectorAll('.cr-list__row').length).toBe(3);
+
+		const select: HTMLSelectElement = fixture.nativeElement.querySelector('.cr-list__filter');
+		select.value = 'APPROVED';
+		select.dispatchEvent(new Event('change'));
+		fixture.detectChanges();
+
+		const rows = fixture.nativeElement.querySelectorAll('.cr-list__row');
+		rows.forEach((row: HTMLElement) => {
+			expect(row.textContent).toContain('APPROVED');
+		});
+	});
+
 });
+
+	
