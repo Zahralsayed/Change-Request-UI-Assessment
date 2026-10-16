@@ -31,4 +31,33 @@ describe('CrDetailComponent', () => {
 		const approveBtn: HTMLButtonElement = fixture.nativeElement.querySelector('.cr-actions__approve');
 		expect(approveBtn.disabled).toBe(true);
 	});
+
+	it('disable reject button until a reason is provided' , 
+		async () => {
+			const fixture = await render(users.approver, 'CR-1'); 
+			const rejectBtn: HTMLButtonElement = fixture.nativeElement.querySelector('.cr-actions__reject-btn');
+			const reasonarea:  HTMLTextAreaElement = fixture.nativeElement.querySelector('.cr-actions__reason');
+
+			expect(rejectBtn.disabled).toBe(true);
+
+			reasonarea.value = 'Missing';
+			reasonarea.dispatchEvent(new Event('input'));
+			reasonarea.dispatchEvent(new Event('keyup'));
+			fixture.detectChanges();
+
+			expect(rejectBtn.disabled).toBe(false);
+		});
+
+		it('sort approval timeline from old to new',
+			async () => {
+				const fixture = await render(users.approver, 'CR-1'); 
+				const entries = fixture.componentInstance.timeline;
+
+				for( let i= 0; i< entries.length - 1; i++){
+					const prevTime = new Date(entries[i].at).getTime();
+					const nextTime = new Date(entries[i+1].at).getTime();
+					expect(prevTime).toBeLessThanOrEqual(nextTime);
+				}
+			});
+
 });
